@@ -1,0 +1,54 @@
+body{
+    background-color: #e5e5e5;
+}
+
+.login-content{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    height: 80vh;
+    max-width: 450px;
+
+    padding: 2rem;
+    margin-top: 5vh;
+    margin-left: auto;
+    margin-right: auto;
+
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 2px 2px 10px #d4d4d4;
+}
+
+.form-login {
+    width: 50rem;
+}
+
+.btn-entrar {
+    font-size:medium;
+
+    color:white;
+    background-color: #2F4164;
+    box-shadow: 1px 1px 5px #70776e;
+
+    transition: 0.5s;
+}
+
+.btn-entrar:hover {
+    color: white;
+    background-color: #1C273C;
+}
+
+.opcoes{
+    font-size:medium;
+}
+
+.opcoes a{
+    text-decoration: none;
+    color: #2F4164;
+    transition: 0.5s;
+}
+
+.opcoes a:hover {
+    color: #1C273C;
+}
