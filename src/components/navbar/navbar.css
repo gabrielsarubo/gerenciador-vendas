@@ -6,7 +6,6 @@
 
 .link-home{
     color: white;
-    font-family: 'SF PRO Display', sans-serif;
     font-weight: light;
 }
 .link-home:hover{
@@ -15,7 +14,6 @@
 
 .nav-item a{
     text-decoration: none ;
-    font-family: 'SF PRO Display', sans-serif;
     font-size: 17px;
     color: white;
 }

@@ -3,11 +3,13 @@ import './home.css';
 import Navbar from '../../components/navbar';
 
 function Home() {
+	const handleChange = () => {}
+	
 	return (
 		<>
 			<Navbar />
-			<div className="container-fluid">
-				<div className="row g-4">
+			<div className="Home container-fluid h-100">
+				<div className="row g-4 h-100">
 					{/* PANEL LEFT, for Adding Products and Listing them */}
 					<div className="col-md-8 pt-3">
 						<h1 className="h3 mb-3">Painel</h1>
@@ -29,17 +31,17 @@ function Home() {
 								{/* Estoque field */}
 								<div className="col-2">
 									<label htmlFor="inputEstoque" className="form-label">Estoque</label>
-									<input type="text" className="form-control" id="inputEstoque" readOnly />
+									<input type="text" className="form-control" id="inputEstoque" onChange={handleChange} value="20" readOnly />
 								</div>
 								{/* Price field */}
 								<div className="col-2">
 									<label htmlFor="inputPrice" className="form-label">Preço</label>
-									<input type="text" className="form-control" id="inputPrice" readOnly />
+									<input type="text" className="form-control" id="inputPrice" onChange={handleChange} value="R$ 100,00" readOnly />
 								</div>
 								{/* Quantity field */}
 								<div className="col-2">
 									<label htmlFor="inputQuantity" className="form-label">Quantidade</label>
-									<input type="text" className="form-control" id="inputQuantity" />
+									<input type="text" className="form-control" id="inputQuantity" onChange={handleChange} value="8" />
 								</div>
 								{/* Submti button */}
 								<div className="col-2">
@@ -52,7 +54,12 @@ function Home() {
 						<section className="p-3 bg-light">
 							<header className="mb-3 d-flex justify-content-between align-items-center">
 								<h3 className="h5">Lista de Produtos</h3>
-								<button className="btn btn-outline-primary">Cadastrar</button>
+								<button className="btn btn-outline-primary">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-plus" viewBox="0 0 16 16">
+										<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+									</svg>
+									Cadastrar
+								</button>
 							</header>
 
 							{/* List of products do Estoque */}
@@ -84,9 +91,20 @@ function Home() {
 					</div>
 
 					{/* PANEL RIGHT, for the Shopping Cart */}
-					<div className="col-md-4">
-						<section className="p-3 bg-light">
-							<h2 className="h4 mb-4">Carrinho</h2>
+					<div className="col-md-4 h-100">
+						<section className="shoppping-panel p-3 bg-light h-100">
+							<header className="mt-3 mb-5">
+								<h2 className="h4 m-0 text-center" style={{ lineHeight: 1 }}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill" viewBox="0 0 16 16">
+										<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+									</svg>
+									&nbsp;Carrinho
+								</h2>
+							</header>
+
+							<div className="finish-purchase text-center">
+								<button className="btn btn-primary">Finalizar Compra</button>
+							</div>
 
 							{/* Shopping List of cards */}
 							<div className="d-flex flex-column">
