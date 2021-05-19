@@ -1,10 +1,38 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { useSelector} from 'react-redux';
+import firebase from '../../config/firebase';
 import './home.css';
 import Navbar from '../../components/navbar';
+import { Link } from 'react-router-dom';
 
 function Home() {
-	const handleChange = () => {}
-	
+
+	const [nome, setNome] = useState();
+    const [preco, setPreco] = useState();
+    const [quantidade, setQuantidade] = useState();
+    const [qtd, setQtd] = useState();
+    const [publicacoes, setPosts] = useState([]);
+    const [pesquisa, setPesquisa] = useState('');
+    const usuarioEmail = useSelector(state => state.usuarioEmail);
+
+	var listaPosts = [];
+
+	const handleChange = () => { }
+	useEffect( () => {
+
+        firebase.firestore().collection('posts').where('user', '==', usuarioEmail).get().then(async (resultado) => {
+            await resultado.docs.forEach( doc => {
+                if (doc.data().nome.indexOf(pesquisa) >= 0) {
+                    listaPosts.push({
+                        id: doc.id,
+                        ...doc.data()
+                    })
+                }
+            })
+            setPosts(listaPosts);
+        })
+    },[]);
+
 	return (
 		<>
 			<Navbar />
@@ -15,28 +43,35 @@ function Home() {
 						<h1 className="h3 mb-3">Painel</h1>
 
 						{/* Section for adding products */}
-						<section className="mb-4 p-3 bg-light">
+						<section className="mb-4 p-3 bg-light card">
 							<form className="row g-3 align-items-end">
 								{/* Product field */}
 								<div className="col-4">
 									<label htmlFor="inputProduct" className="form-label">Produto</label>
-									<select id="inputProduct" className="form-select">
-										<option defaultValue >Pesquise</option>
-										<option value="1">One</option>
-										<option value="2">Two</option>
-										<option value="3">Three</option>
+									<select id="inputProduct" className="form-select" onChange={(e) => {
+
+										setPreco(publicacoes[e.target.value].preco);
+										setQuantidade(publicacoes[e.target.value].quantidade);
+
+									}}>
+										<option defaultValue >Pesquise por produto</option>
+										{
+											publicacoes.map ((value,index) => 
+												(<option key={index} value={index}>{value.nome}</option>)
+											)
+										}
 									</select>
 								</div>
 
 								{/* Estoque field */}
 								<div className="col-2">
 									<label htmlFor="inputEstoque" className="form-label">Estoque</label>
-									<input type="text" className="form-control" id="inputEstoque" onChange={handleChange} value="20" readOnly />
+									<input type="text" className="form-control" id="inputEstoque" onChange={handleChange} value={quantidade} readOnly />
 								</div>
 								{/* Price field */}
 								<div className="col-2">
 									<label htmlFor="inputPrice" className="form-label">Preço</label>
-									<input type="text" className="form-control" id="inputPrice" onChange={handleChange} value="R$ 100,00" readOnly />
+									<input type="text" className="form-control" id="inputPrice" onChange={handleChange}  value={preco} readOnly />
 								</div>
 								{/* Quantity field */}
 								<div className="col-2">
@@ -51,15 +86,15 @@ function Home() {
 						</section>
 
 						{/* Section for Listing products from Estoque */}
-						<section className="p-3 bg-light">
+						<section className="p-3 bg-light card">
 							<header className="mb-3 d-flex justify-content-between align-items-center">
 								<h3 className="h5">Lista de Produtos</h3>
-								<button className="btn btn-outline-primary">
+								<Link to="/produto" className="btn btn-outline-primary">
 									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-plus" viewBox="0 0 16 16">
 										<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
 									</svg>
 									Cadastrar
-								</button>
+								</Link>
 							</header>
 
 							{/* List of products do Estoque */}
