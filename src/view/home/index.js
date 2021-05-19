@@ -6,32 +6,41 @@ import Navbar from '../../components/navbar';
 import { Link } from 'react-router-dom';
 
 function Home() {
+	// Email do usuario logado
+	const usuarioEmail = useSelector(state => state.usuarioEmail);
 
-	const [nome, setNome] = useState();
-    const [preco, setPreco] = useState();
-    const [quantidade, setQuantidade] = useState();
-    const [qtd, setQtd] = useState();
-    const [publicacoes, setPosts] = useState([]);
-    const [pesquisa, setPesquisa] = useState('');
-    const usuarioEmail = useSelector(state => state.usuarioEmail);
+	// Lista de produtos do BD
+	const [produtos, setPosts] = useState([]);
 
-	var listaPosts = [];
+	// Campos de cada produto
+	// const [nome, setNome] = useState();
+	const [preco, setPreco] = useState();
+	const [quantidade, setQuantidade] = useState();
+	const [estoque, setEstoque] = useState();
 
-	const handleChange = () => { }
+	const [pesquisa, setPesquisa] = useState('');
+
+	const handleChange = () => {}
+
+	const handleClick = () => {
+		console.log(produtos);
+	}
+	
 	useEffect( () => {
+		let listaProdutos = [];
 
         firebase.firestore().collection('posts').where('user', '==', usuarioEmail).get().then(async (resultado) => {
             await resultado.docs.forEach( doc => {
                 if (doc.data().nome.indexOf(pesquisa) >= 0) {
-                    listaPosts.push({
+                    listaProdutos.push({
                         id: doc.id,
                         ...doc.data()
                     })
                 }
             })
-            setPosts(listaPosts);
+            setPosts(listaProdutos);
         })
-    },[]);
+    },[usuarioEmail, pesquisa]);
 
 	return (
 		<>
@@ -50,13 +59,13 @@ function Home() {
 									<label htmlFor="inputProduct" className="form-label">Produto</label>
 									<select id="inputProduct" className="form-select" onChange={(e) => {
 
-										setPreco(publicacoes[e.target.value].preco);
-										setQuantidade(publicacoes[e.target.value].quantidade);
+										setPreco(produtos[e.target.value].preco);
+										setEstoque(produtos[e.target.value].estoque);
 
 									}}>
 										<option defaultValue >Pesquise por produto</option>
 										{
-											publicacoes.map ((value,index) => 
+											produtos.map ((value,index) => 
 												(<option key={index} value={index}>{value.nome}</option>)
 											)
 										}
@@ -66,21 +75,21 @@ function Home() {
 								{/* Estoque field */}
 								<div className="col-2">
 									<label htmlFor="inputEstoque" className="form-label">Estoque</label>
-									<input type="text" className="form-control" id="inputEstoque" onChange={handleChange} value={quantidade} readOnly />
+									<input type="text" className="form-control" id="inputEstoque" defaultValue={estoque} readOnly />
 								</div>
 								{/* Price field */}
 								<div className="col-2">
 									<label htmlFor="inputPrice" className="form-label">Preço</label>
-									<input type="text" className="form-control" id="inputPrice" onChange={handleChange}  value={preco} readOnly />
+									<input type="text" className="form-control" id="inputPrice" defaultValue={preco} readOnly />
 								</div>
 								{/* Quantity field */}
 								<div className="col-2">
 									<label htmlFor="inputQuantity" className="form-label">Quantidade</label>
-									<input type="text" className="form-control" id="inputQuantity" onChange={handleChange} value="8" />
+									<input type="number" className="form-control" id="inputQuantity" onChange={handleChange} defaultValue={quantidade} />
 								</div>
 								{/* Submti button */}
 								<div className="col-2">
-									<button type="submit" className="btn btn-primary w-100">Adicionar</button>
+									<button type="button" className="btn btn-primary w-100" onClick={handleClick}>Adicionar</button>
 								</div>
 							</form>
 						</section>
@@ -108,18 +117,24 @@ function Home() {
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<th scope="row">Nome do produto</th>
-										<td>Uma descrição bem legal e breve para o produto</td>
-										<td>16</td>
-										<td>R$ 120,00</td>
-									</tr>
-									<tr>
-										<th scope="row">Nome do produto</th>
-										<td>Uma descrição bem legal e breve para o produto</td>
-										<td>16</td>
-										<td>R$ 120,00</td>
-									</tr>
+									{
+										produtos.length ? (
+											produtos.map(produto => {
+												return (
+													<tr key={produto.id}>
+														<th scope="row">{produto.nome}</th>
+														<td>{produto.descricao}</td>
+														<td>{produto.estoque}</td>
+														<td>{produto.preco}</td>
+													</tr>
+												)
+											})
+										) : (
+											<tr>
+												<th scope="row" colSpan="4">Ainda nada por aqui.</th>
+											</tr>
+										)
+									}
 								</tbody>
 							</table>
 						</section>
