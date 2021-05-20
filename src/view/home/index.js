@@ -4,43 +4,89 @@ import firebase from '../../config/firebase';
 import './home.css';
 import Navbar from '../../components/navbar';
 import { Link } from 'react-router-dom';
+import CartItems from '../../components/CartItems';
 
 function Home() {
 	// Email do usuario logado
 	const usuarioEmail = useSelector(state => state.usuarioEmail);
 
 	// Lista de produtos do BD
-	const [produtos, setPosts] = useState([]);
+	const [produtos, setProdutos] = useState([]);
 
 	// Campos de cada produto
-	// const [nome, setNome] = useState();
+	const [id, setId] = useState();
+	const [nome, setNome] = useState();
+	const [descricao, setDescricao] = useState();
 	const [preco, setPreco] = useState();
 	const [quantidade, setQuantidade] = useState();
 	const [estoque, setEstoque] = useState();
+
+	// Carrinho (lista de itens)
+	const [carrinho, setCarrinho] = useState([])
+
+	/* Venda (mesma estrutura da collection 'vendas' dentro do BD)
+		data: timestamp
+		itens: [
+			{ 1x Hamburguer },
+			{ ... }
+		],
+		total: 1200.00
+	*/
+	const [vendas, setVendas] = useState({
+		data: undefined,
+		itens: [],
+		total: undefined
+	})
 
 	const [pesquisa, setPesquisa] = useState('');
 
 	const handleChange = () => {}
 
-	const handleClick = () => {
-		console.log(produtos);
+	const addItemAoCarrinho = () => {
+		// Recuperar os campos do form de add um item no carrinho
+		let itemCarrinho = {
+			id: Math.random(),
+			nome: nome,
+			descricao: descricao,
+			preco: preco,
+			quantidade: quantidade
+		}
+		
+		// Adicionar no state de 'carrinho' para todo o App ter acesso aos items do carrinho
+		let listaCarrinho = [...carrinho, itemCarrinho]
+		setCarrinho(listaCarrinho)
+	}
+
+	const deleteItemCarrinho = (id) => {
+		let carrinhoAtualizado = carrinho.filter(item => {
+			return item.id !== id
+		})
+
+		setCarrinho(carrinhoAtualizado)
+	}
+
+	// Adicionar item ao carrinho pelo form
+	const handleSubmit = e => {
+		e.preventDefault()
+
+		addItemAoCarrinho()
 	}
 	
-	useEffect( () => {
+	useEffect(() => {
 		let listaProdutos = [];
 
-        firebase.firestore().collection('posts').where('user', '==', usuarioEmail).get().then(async (resultado) => {
-            await resultado.docs.forEach( doc => {
-                if (doc.data().nome.indexOf(pesquisa) >= 0) {
-                    listaProdutos.push({
-                        id: doc.id,
-                        ...doc.data()
-                    })
-                }
-            })
-            setPosts(listaProdutos);
-        })
-    },[usuarioEmail, pesquisa]);
+		firebase.firestore().collection('posts').where('user', '==', usuarioEmail).get().then(async (resultado) => {
+			await resultado.docs.forEach(doc => {
+				if (doc.data().nome.indexOf(pesquisa) >= 0) {
+					listaProdutos.push({
+						id: doc.id,
+						...doc.data()
+					})
+				}
+			})
+			setProdutos(listaProdutos);
+		})
+	}, [usuarioEmail, pesquisa]);
 
 	return (
 		<>
@@ -51,19 +97,22 @@ function Home() {
 					<div className="col-md-8 pt-3">
 						<h1 className="h3 mb-3">Painel</h1>
 
-						{/* Section for adding products */}
+						{/* Secao para adicionar uma novo item (produto) no carrinho */}
 						<section className="mb-4 p-3 bg-light card">
-							<form className="row g-3 align-items-end">
+							<form className="row g-2 align-items-end" onSubmit={handleSubmit}>
 								{/* Product field */}
 								<div className="col-4">
 									<label htmlFor="inputProduct" className="form-label">Produto</label>
 									<select id="inputProduct" className="form-select" onChange={(e) => {
 
+										setId(produtos[e.target.value].id)
+										setNome(produtos[e.target.value].nome)
+										setDescricao(produtos[e.target.value].descricao)
 										setPreco(produtos[e.target.value].preco);
 										setEstoque(produtos[e.target.value].estoque);
 
-									}}>
-										<option defaultValue >Pesquise por produto</option>
+									}} required >
+										<option value="" >Pesquisar</option>
 										{
 											produtos.map ((value,index) => 
 												(<option key={index} value={index}>{value.nome}</option>)
@@ -75,21 +124,21 @@ function Home() {
 								{/* Estoque field */}
 								<div className="col-2">
 									<label htmlFor="inputEstoque" className="form-label">Estoque</label>
-									<input type="text" className="form-control" id="inputEstoque" defaultValue={estoque} readOnly />
+									<input type="number" className="form-control" id="inputEstoque" defaultValue={estoque} readOnly />
 								</div>
 								{/* Price field */}
 								<div className="col-2">
 									<label htmlFor="inputPrice" className="form-label">Preço</label>
-									<input type="text" className="form-control" id="inputPrice" defaultValue={preco} readOnly />
+									<input type="number" className="form-control" id="inputPrice" defaultValue={preco} readOnly />
 								</div>
 								{/* Quantity field */}
 								<div className="col-2">
 									<label htmlFor="inputQuantity" className="form-label">Quantidade</label>
-									<input type="number" className="form-control" id="inputQuantity" onChange={handleChange} defaultValue={quantidade} />
+									<input type="number" className="form-control" id="inputQuantity" onChange={e => {setQuantidade(e.target.valueAsNumber)}} min="1" max={estoque} required />
 								</div>
 								{/* Submti button */}
 								<div className="col-2">
-									<button type="button" className="btn btn-primary w-100" onClick={handleClick}>Adicionar</button>
+									<button type="submit" className="btn btn-primary w-100">Adicionar</button>
 								</div>
 							</form>
 						</section>
@@ -158,29 +207,7 @@ function Home() {
 
 							{/* Shopping List of cards */}
 							<div className="d-flex flex-column">
-								<div className="card-box mb-4">
-									<div className="top mb-2 d-flex justify-content-between align-items-center">
-										<div className="h6 m-0">Nome do produto</div>
-										<div className="h6 m-0">R$ 210,00</div>
-									</div>
-									<div className="mb-2 text-muted">Breve descrição do produto para o usuário distinguir</div>
-									<div className="bottom d-flex justify-content-between">
-										<div>Quantidade: 1</div>
-										<div className="text-danger">Remover</div>
-									</div>
-								</div>
-
-								<div className="card-box mb-4">
-									<div className="top mb-2 d-flex justify-content-between align-items-center">
-										<div className="h6 m-0">Nome do produto</div>
-										<div className="h6 m-0">R$ 210,00</div>
-									</div>
-									<div className="mb-2 text-muted">Breve descrição do produto para o usuário distinguir</div>
-									<div className="bottom d-flex justify-content-between">
-										<div>Quantidade: 1</div>
-										<div className="text-danger">Remover</div>
-									</div>
-								</div>
+								<CartItems carrinho={carrinho} deleteItemCarrinho={deleteItemCarrinho} />
 							</div>
 						</section>
 					</div>

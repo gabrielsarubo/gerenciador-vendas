@@ -81,11 +81,11 @@ function Produto({ match }) {
 						<div className="form-group row my-4">
 							<div className="col-6">
 								<label>Preço:</label>
-								<input onChange={(e) => setPreco(e.target.value)} type="text" className="form-control" value={preco} />
+								<input onChange={(e) => setPreco(e.target.valueAsNumber)} type="number" className="form-control" value={preco} />
 							</div>
 							<div className="col-6">
-								<label>Quantidade:</label>
-								<input onChange={(e) => setEstoque(e.target.value)} type="text" className="form-control" value={estoque} />
+								<label>Estoque:</label>
+								<input onChange={(e) => setEstoque(e.target.valueAsNumber)} type="number" className="form-control" value={estoque} />
 							</div>
 						</div>
 						<div className="form-group my-4">
