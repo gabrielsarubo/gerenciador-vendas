@@ -18,6 +18,12 @@ function Relatorio() {
 	// Lista de itens de uma determinada venda
 	const [itens, setItens] = useState([])
 
+	// Botao de exclusao de uma venda
+	const [deleteButton, setDeleteButton] = useState({
+		id: undefined,
+		isDisabled: true
+	})
+
 	// Function that list all the items in one sale after clicking on it
 	const handleClickVenda = idVenda => {
 		// get itens based on the venda id
@@ -30,6 +36,34 @@ function Relatorio() {
 		})
 
 		setItens(listaItens)
+
+		setDeleteButton({
+			id: idVenda,
+			isDisabled: false
+		})
+	}
+
+	const deleteVenda = id => {
+		db.collection('vendas').doc(id).delete()
+			.then(() => {
+				console.log('Venda removida do BD');
+
+				// Now, update the current component
+				let vendasAtualizada = vendas.filter(venda => {
+					return venda.id !== id
+				})
+
+				setVendas(vendasAtualizada)
+
+				// Clear detalhes da venda
+				setItens([])
+
+				// Clear delete button
+				setDeleteButton({
+					id: undefined,
+					isDisabled: true
+				})
+			})
 	}
 	
 	// Get all the Vendas from the DB
@@ -50,7 +84,7 @@ function Relatorio() {
 			.catch(err => {
 				console.log('Erro ao recuperar coleção de vendas.');
 			})
-		
+
 	}, [db])
 	
 	return (
@@ -131,6 +165,16 @@ function Relatorio() {
 							<div className="d-flex flex-column my-4">
 								<ItensVenda itens={itens} />
 							</div>
+
+							{
+								deleteButton.isDisabled ? (
+									(null)
+								) : (
+									<div className="text-center mb-3">
+										<button className="btn btn-outline-danger w-100" onClick={() => {deleteVenda(deleteButton.id)}}>Excluir Venda</button>
+									</div>
+								)
+							}
 						</section>
 					</div>
 				</div>
