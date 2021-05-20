@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { useSelector} from 'react-redux';
-import firebase from '../../config/firebase';
-import './home.css';
-import Navbar from '../../components/navbar';
 import { Link } from 'react-router-dom';
+// Redux
+import { useSelector} from 'react-redux';
+// Firebase
+import firebase from '../../config/firebase';
+// Componentes
+import Navbar from '../../components/navbar';
 import CartItems from '../../components/CartItems';
 
 function Home() {
@@ -143,11 +145,11 @@ function Home() {
 	return (
 		<>
 			<Navbar />
-			<div className="Home container-fluid h-100">
-				<div className="row g-4 h-100">
+			<div className="Home container">
+				<div className="row g-4">
 					{/* PANEL LEFT, for Adding Products and Listing them */}
-					<div className="col-md-8 pt-3">
-						<h1 className="h3 mb-3">Painel</h1>
+					<div className="col-md-8 pt-4">
+						<h1 className="h2 mb-3">Painel</h1>
 
 						{/* Secao para adicionar uma novo item (produto) no carrinho */}
 						<section className="mb-4 p-3 bg-light card">
@@ -242,9 +244,9 @@ function Home() {
 					</div>
 
 					{/* PANEL RIGHT, for the Shopping Cart */}
-					<div className="col-md-4 h-100">
-						<section className="shoppping-panel p-3 bg-light h-100">
-							<header className="mt-3 mb-5">
+					<div className="col-md-4">
+						<section className="p-3 bg-light">
+							<header className="mt-3 pb-4">
 								<h2 className="h4 m-0 text-center" style={{ lineHeight: 1 }}>
 									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" className="bi bi-cart-fill" viewBox="0 0 16 16">
 										<path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
@@ -253,14 +255,18 @@ function Home() {
 								</h2>
 							</header>
 
-							<div className="finish-purchase text-center">
-								<button className="btn btn-primary" onClick={handleFinalizarCompra}>Finalizar Compra</button>
-							</div>
-
 							{/* Shopping List of cards */}
-							<div className="d-flex flex-column">
+							<div className="d-flex flex-column my-4">
 								<CartItems carrinho={carrinho} deleteItemCarrinho={deleteItemCarrinho} />
 							</div>
+
+							{
+								carrinho.length ? (
+									<div className="text-center mb-3">
+										<button className="btn btn-primary w-100" onClick={handleFinalizarCompra}>Finalizar Compra</button>
+									</div>
+								) : (null)
+							}
 						</section>
 					</div>
 				</div>

@@ -1,17 +1,22 @@
+@charset "UTF-8";
+
+/* Importar fonte */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+/* Estilos gerais do App */
 :root {
   --brandBlue: #2F4164;
 }
 
-html, body, #root { height: 100%; }
-
-.Home {
-  padding-top: 56px;
+body {
+  font-family: 'Nunito', sans-serif;
+  color: #1b253a;
 }
 
-.h-100 {
-  height: 100% !important;
-}
+h1, h2, h3, h4, h5, h6 { font-weight: 600; }
+.h1, .h2, .h3, .h4, .h5, .h6 { font-weight: 600; }
 
+/* Botoes */
 .btn-primary {
   font-size:medium;
 
@@ -45,17 +50,4 @@ html, body, #root { height: 100%; }
   background-color: #2F4164;;
 
   transition: 0.5s;
-}
-
-.shoppping-panel {
-  position: relative;
-}
-
-.finish-purchase {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 24px;
-  width: fit-content;
 }
