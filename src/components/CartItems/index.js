@@ -10,7 +10,7 @@ const CartItems = ({ carrinho, deleteItemCarrinho }) => {
           <div className="mb-2 text-muted">{item.descricao}</div>
           <div className="bottom d-flex justify-content-between">
             <div>{`Quantidade: ${item.quantidade}`}</div>
-            <div className="text-danger" onClick={() => {deleteItemCarrinho(item.id)}}>Remover</div>
+            <div className="text-danger" onClick={() => {deleteItemCarrinho(item.idItem)}}>Remover</div>
           </div>
         </div>
       )

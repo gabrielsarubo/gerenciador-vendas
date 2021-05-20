@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useSelector} from 'react-redux';
 import firebase from '../../config/firebase';
 import './home.css';
@@ -23,6 +23,10 @@ function Home() {
 	const [preco, setPreco] = useState();
 	const [quantidade, setQuantidade] = useState();
 	const [estoque, setEstoque] = useState();
+
+	// Create refs for Produto form
+	const refSelectProduct = useRef()
+	const refInputQuantidade = useRef()
 
 	// Carrinho (lista de itens)
 	const [carrinho, setCarrinho] = useState([])
@@ -61,7 +65,7 @@ function Home() {
 
 	const deleteItemCarrinho = (id) => {
 		let carrinhoAtualizado = carrinho.filter(item => {
-			return item.id !== id
+			return item.idItem !== id
 		})
 
 		setCarrinho(carrinhoAtualizado)
@@ -72,6 +76,16 @@ function Home() {
 		e.preventDefault()
 
 		addItemAoCarrinho()
+
+		// Limpar campos do form
+		refSelectProduct.current.options[0].selected = true
+		setId('')
+		setNome('')
+		setDescricao('')
+		setPreco('');
+		setEstoque('');
+		refInputQuantidade.current.value = ''
+		refSelectProduct.current.focus()
 	}
 
 	// Add campos de venda e add carrinho dentro de venda
@@ -140,8 +154,8 @@ function Home() {
 							<form className="row g-2 align-items-end" onSubmit={handleSubmit}>
 								{/* Product field */}
 								<div className="col-4">
-									<label htmlFor="inputProduct" className="form-label">Produto</label>
-									<select id="inputProduct" className="form-select" onChange={(e) => {
+									<label htmlFor="selectProduct" className="form-label">Produto</label>
+									<select id="selectProduct" ref={refSelectProduct} className="form-select" onChange={(e) => {
 
 										setId(produtos[e.target.value].id)
 										setNome(produtos[e.target.value].nome)
@@ -150,7 +164,7 @@ function Home() {
 										setEstoque(produtos[e.target.value].estoque);
 
 									}} required >
-										<option value="" >Pesquisar</option>
+										<option value="">Pesquisar</option>
 										{
 											produtos.map ((value,index) => 
 												(<option key={index} value={index}>{value.nome}</option>)
@@ -172,7 +186,7 @@ function Home() {
 								{/* Quantity field */}
 								<div className="col-2">
 									<label htmlFor="inputQuantity" className="form-label">Quantidade</label>
-									<input type="number" className="form-control" id="inputQuantity" onChange={e => {setQuantidade(e.target.valueAsNumber)}} min="1" max={estoque} required />
+									<input type="number" className="form-control" id="inputQuantity" ref={refInputQuantidade} onChange={e => {setQuantidade(e.target.valueAsNumber)}} min="1" max={estoque} required />
 								</div>
 								{/* Submti button */}
 								<div className="col-2">
