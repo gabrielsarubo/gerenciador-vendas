@@ -149,7 +149,7 @@ function Relatorio() {
 							<table className="table table-hover">
 								<thead>
 									<tr>
-										<th scope="col">Código</th>
+										<th scope="col"># Código</th>
 										<th scope="col">Data</th>
 										<th scope="col"className="text-end">Valor total</th>
 									</tr>
