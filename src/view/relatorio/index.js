@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import firebase from '../../config/firebase';
 // Componentes
 import Navbar from '../../components/navbar';
+import ItensVenda from '../../components/ItensVenda';
 
 function Relatorio() {
 	// Reference the Firestore database
@@ -13,6 +14,23 @@ function Relatorio() {
 
 	// Lista de vendas do BD
 	const [vendas, setVendas] = useState([])
+
+	// Lista de itens de uma determinada venda
+	const [itens, setItens] = useState([])
+
+	// Function that list all the items in one sale after clicking on it
+	const handleClickVenda = idVenda => {
+		// get itens based on the venda id
+		const vendaEncontrada = vendas.find(venda => venda.id === idVenda)
+
+		let listaItens = []
+		
+		vendaEncontrada.itens.forEach(item => {
+			listaItens.push(item)
+		})
+
+		setItens(listaItens)
+	}
 	
 	// Get all the Vendas from the DB
 	useEffect(() => {
@@ -33,7 +51,7 @@ function Relatorio() {
 				console.log('Erro ao recuperar coleção de vendas.');
 			})
 		
-	}, [])
+	}, [db])
 	
 	return (
 		<>
@@ -81,16 +99,16 @@ function Relatorio() {
 										vendas.length ? (
 											vendas.map(venda => {
 												return (
-													<tr key={venda.id}>
+													<tr key={venda.id} onClick={() => {handleClickVenda(venda.id)}}>
 														<th scope="row">{venda.id}</th>
-														<td>{new Date(venda.data.seconds * 1000).toLocaleDateString()}</td>
+														<td>{new Date(venda.data.seconds * 1000).toLocaleDateString('pt-br')}</td>
 														<td className="text-end">{`R$ ${venda.total}`}</td>
 													</tr>
 												)
 											})
 										) : (
 											<tr>
-												<td scope="row" colSpan="3" className="text-center">Nenhuma venda registrada.</td>
+												<td colSpan="3" className="text-center">Nenhuma venda registrada.</td>
 											</tr>
 										)
 									}
@@ -111,7 +129,7 @@ function Relatorio() {
 
 							{/* Shopping List of cards */}
 							<div className="d-flex flex-column my-4">
-								{/* <CartItems carrinho={carrinho} deleteItemCarrinho={deleteItemCarrinho} /> */}
+								<ItensVenda itens={itens} />
 							</div>
 						</section>
 					</div>
