@@ -2,7 +2,7 @@ const CartItems = ({ carrinho, deleteItemCarrinho }) => {
   const listaCarrinho = carrinho.length ? (
     carrinho.map(item => {
       return (
-        <div className="card-box mb-4" key={item.id}>
+        <div className="card-box mb-4" key={item.idItem}>
           <div className="top mb-2 d-flex justify-content-between align-items-center">
             <div className="h6 m-0">{item.nome}</div>
             <div className="h6 m-0">{`R$ ${item.preco}`}</div>

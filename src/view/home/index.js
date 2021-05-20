@@ -7,6 +7,9 @@ import { Link } from 'react-router-dom';
 import CartItems from '../../components/CartItems';
 
 function Home() {
+	// Reference the Firestore database
+  const db = firebase.firestore()
+
 	// Email do usuario logado
 	const usuarioEmail = useSelector(state => state.usuarioEmail);
 
@@ -24,7 +27,7 @@ function Home() {
 	// Carrinho (lista de itens)
 	const [carrinho, setCarrinho] = useState([])
 
-	/* Venda (mesma estrutura da collection 'vendas' dentro do BD)
+	/* Venda (mesma estrutura da collection 'venda' dentro do BD)
 		data: timestamp
 		itens: [
 			{ 1x Hamburguer },
@@ -32,20 +35,19 @@ function Home() {
 		],
 		total: 1200.00
 	*/
-	const [vendas, setVendas] = useState({
+	const [venda, setVenda] = useState({
 		data: undefined,
 		itens: [],
 		total: undefined
 	})
-
-	const [pesquisa, setPesquisa] = useState('');
 
 	const handleChange = () => {}
 
 	const addItemAoCarrinho = () => {
 		// Recuperar os campos do form de add um item no carrinho
 		let itemCarrinho = {
-			id: Math.random(),
+			idItem: Math.random(),
+			idProduto: id,
 			nome: nome,
 			descricao: descricao,
 			preco: preco,
@@ -71,22 +73,58 @@ function Home() {
 
 		addItemAoCarrinho()
 	}
+
+	// Add campos de venda e add carrinho dentro de venda
+	const cadastrarVenda = () => {
+		let valorTotal = 0
+
+		carrinho.forEach(item => {
+			valorTotal += (item.preco * item.quantidade)
+		})
+
+		const novaVenda = {
+			data: new Date(),
+			itens: carrinho,
+			total: valorTotal
+		}
+
+		setVenda(novaVenda)
+
+		return novaVenda
+	}
+
+	// Enviar a compra para o BD
+	const handleFinalizarCompra = () => {
+		const novaVenda = cadastrarVenda()
+
+		db.collection('vendas').add({novaVenda})
+			.then(res => {
+				console.log('venda adicionada');
+			})
+			.catch(err => {
+				console.log('erro > venda nao adicionada');
+			})
+		
+		setCarrinho([])
+	}
 	
 	useEffect(() => {
 		let listaProdutos = [];
 
-		firebase.firestore().collection('posts').where('user', '==', usuarioEmail).get().then(async (resultado) => {
-			await resultado.docs.forEach(doc => {
-				if (doc.data().nome.indexOf(pesquisa) >= 0) {
+		db.collection('posts').where('user', '==', usuarioEmail).get()
+			.then(res => {
+				res.docs.forEach(doc => {
 					listaProdutos.push({
 						id: doc.id,
 						...doc.data()
 					})
-				}
+				})
+
+				setProdutos(listaProdutos);
 			})
-			setProdutos(listaProdutos);
-		})
-	}, [usuarioEmail, pesquisa]);
+			.catch(err => console.log('Erro ao carregar lista de produtos'))		
+		
+	}, [db, usuarioEmail]);
 
 	return (
 		<>
@@ -202,7 +240,7 @@ function Home() {
 							</header>
 
 							<div className="finish-purchase text-center">
-								<button className="btn btn-primary">Finalizar Compra</button>
+								<button className="btn btn-primary" onClick={handleFinalizarCompra}>Finalizar Compra</button>
 							</div>
 
 							{/* Shopping List of cards */}
