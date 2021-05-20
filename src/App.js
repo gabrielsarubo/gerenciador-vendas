@@ -20,6 +20,7 @@ function App() {
           <Route exact path='/cadastrar' component={Cadastro}/>
           <Route exact path='/home' component={Home}/>
           <Route exact path='/produto' component={Produto}/>
+          <Route path='/produto/:idProduto' component={Produto}/>
           <Route exact path='/relatorio' component={Relatorio}/>
         </Router>
       </PersistGate>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import './produto.css';
 import firebase from '../../config/firebase';
 import Navbar from '../../components/navbar';
 import Spinner from 'react-bootstrap/Spinner';
@@ -17,21 +16,21 @@ function Produto({ match }) {
 	const db = firebase.firestore();
 
 	useEffect(() => {
-		if (match.params.idPost) {
-			firebase.firestore().collection('posts').doc(match.params.idPost).get().then(resultado => {
+		if (match.params.idProduto) {
+			firebase.firestore().collection('produtos').doc(match.params.idProduto).get().then(resultado => {
 				setNome(resultado.data().nome);
 				setPreco(resultado.data().preco);
 				setEstoque(resultado.data().estoque);
 				setDescricao(resultado.data().descricao);
 			})
 		}
-	}, [carregando, match.params.idPost])
+	}, [carregando, match.params.idProduto])
 
 	function atualizar() {
 		setCarregando(1)
 		setMensagem(null);
 
-		db.collection('posts').doc(match.params.idPost).update({
+		db.collection('produtos').doc(match.params.idProduto).update({
 			nome: nome,
 			preco: preco,
 			estoque: estoque,
@@ -48,7 +47,7 @@ function Produto({ match }) {
 	function postar() {
 		setCarregando(1)
 
-		db.collection('posts').add({
+		db.collection('produtos').add({
 			nome: nome,
 			preco: preco,
 			estoque: estoque,
@@ -68,13 +67,13 @@ function Produto({ match }) {
 		<>
 			<Navbar />
 			<div className='Produto cadastrar container'>
-				<div className="text-center">
-					<h3 className="mx-auto font-weight-bold my-5">{match.params.idPost ? 'Editar Produto' : 'Cadastrar Produto'}</h3>
+				<div className="text-center mt-5 mb-4">
+					<h3 className="mx-auto font-weight-bold">{match.params.idProduto ? 'Editar Produto' : 'Cadastrar Produto'}</h3>
 				</div>
 
 				<div className="row justify-content-md-center">
 					<form className="w-50">
-						<div className="form-group my-3">
+						<div className="form-group">
 							<label>Nome do Produto:</label>
 							<input onChange={(e) => setNome(e.target.value)} type="text" className="form-control" value={nome} />
 						</div>
@@ -98,8 +97,8 @@ function Produto({ match }) {
 							{mensagem === 'erro' && <span><strong>&#9888;  Atenção! </strong> Falha no envio.</span>}
 						</div>
 
-						{carregando ? <Spinner className="mt-5 mb-5" animation="border" variant="success" role="status"></Spinner>
-							: <button onClick={match.params.idPost ? atualizar : postar} type="button" className="btn btn-lg btn-block mt-3 mb-5 btn-cadastro">{match.params.idPost ? 'Atualizar' : 'Adicionar'}</button>
+						{carregando ? <Spinner animation="border" variant="success" role="status"></Spinner>
+							: <button onClick={match.params.idProduto ? atualizar : postar} type="button" className="btn btn-lg btn-block btn-cadastro">{match.params.idProduto ? 'Atualizar' : 'Adicionar'}</button>
 						}
 
 					</form>
