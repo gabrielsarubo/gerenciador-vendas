@@ -24,6 +24,10 @@ function Relatorio() {
 		isDisabled: true
 	})
 
+	// Fields for filtering the date
+	const [startDate, setStartDate] = useState()
+	const [endDate, setEndDate] = useState()
+
 	// Function that list all the items in one sale after clicking on it
 	const handleClickVenda = idVenda => {
 		// get itens based on the venda id
@@ -65,6 +69,28 @@ function Relatorio() {
 				})
 			})
 	}
+
+	const handleFiltrar = () => {
+		let listaVendas = []
+		
+		const start = (new Date(startDate))
+		const end = (new Date(endDate))
+
+		db.collection('vendas')
+			.where('data', '>', start)
+			.where('data', '<', end)
+			.get()
+			.then(res => {
+				res.docs.forEach(doc => {
+					listaVendas.push({
+						id: doc.id,
+						...doc.data()
+					})
+				})
+
+				setVendas(listaVendas)
+			})
+	}
 	
 	// Get all the Vendas from the DB
 	useEffect(() => {
@@ -100,18 +126,18 @@ function Relatorio() {
 						<section className="mb-4 p-3 bg-light card">
 							<form className="row g-2 align-items-end">
 								{/* Start Date field */}
-								<div className="col-3">
+								<div className="col">
 									<label htmlFor="inputStartDate" className="form-label">Inicio</label>
-									<input type="date" className="form-control" id="inputStartDate" />
+									<input type="date" className="form-control" id="inputStartDate" onChange={e => setStartDate(e.target.value)} />
 								</div>
 								{/* End Date field */}
-								<div className="col-3">
+								<div className="col">
 									<label htmlFor="inputEndDate" className="form-label">Final</label>
-									<input type="date" className="form-control" id="inputEndDate" />
+									<input type="date" className="form-control" id="inputEndDate" onChange={e => setEndDate(e.target.value)} />
 								</div>
 								{/* Submit button */}
-								<div className="col-2">
-									<button type="submit" className="btn btn-primary w-100">Filtrar</button>
+								<div className="col">
+									<button type="button" className="btn btn-primary w-100" onClick={handleFiltrar}>Filtrar</button>
 								</div>
 							</form>
 						</section>
