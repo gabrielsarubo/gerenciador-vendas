@@ -8,6 +8,33 @@ import firebase from '../../config/firebase';
 import Navbar from '../../components/navbar';
 
 function Relatorio() {
+	// Reference the Firestore database
+  const db = firebase.firestore()
+
+	// Lista de vendas do BD
+	const [vendas, setVendas] = useState([])
+	
+	// Get all the Vendas from the DB
+	useEffect(() => {
+		let listaVendas = []
+
+		db.collection('vendas').get()
+			.then(res => {
+				res.docs.forEach(doc => {
+					listaVendas.push({
+						id: doc.id,
+						...doc.data()
+					})
+				})
+				
+				setVendas(listaVendas)
+			})
+			.catch(err => {
+				console.log('Erro ao recuperar coleção de vendas.');
+			})
+		
+	}, [])
+	
 	return (
 		<>
 			<Navbar />
@@ -45,28 +72,27 @@ function Relatorio() {
 								<thead>
 									<tr>
 										<th scope="col">Código</th>
-										<th scope="col">Data da venda</th>
-										<th scope="col">Total</th>
+										<th scope="col">Data</th>
+										<th scope="col"className="text-end">Valor total</th>
 									</tr>
 								</thead>
 								<tbody>
 									{
-										/*produtos.length ? (
-											produtos.map(produto => {
+										vendas.length ? (
+											vendas.map(venda => {
 												return (
-													<tr key={produto.id}>
-														<th scope="row">{produto.nome}</th>
-														<td>{produto.descricao}</td>
-														<td>{produto.estoque}</td>
-														<td>{produto.preco}</td>
+													<tr key={venda.id}>
+														<th scope="row">{venda.id}</th>
+														<td>{new Date(venda.data.seconds * 1000).toLocaleDateString()}</td>
+														<td className="text-end">{`R$ ${venda.total}`}</td>
 													</tr>
 												)
 											})
-										) : (*/
+										) : (
 											<tr>
 												<td scope="row" colSpan="3" className="text-center">Nenhuma venda registrada.</td>
 											</tr>
-										/*)*/
+										)
 									}
 								</tbody>
 							</table>
