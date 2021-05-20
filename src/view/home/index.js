@@ -113,7 +113,7 @@ function Home() {
 	const handleFinalizarCompra = () => {
 		const novaVenda = cadastrarVenda()
 
-		db.collection('vendas').add({novaVenda})
+		db.collection('vendas').add({...novaVenda})
 			.then(res => {
 				console.log('venda adicionada');
 			})
