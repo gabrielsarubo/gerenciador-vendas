@@ -44,7 +44,7 @@ function Home() {
 	const [venda, setVenda] = useState({
 		data: undefined,
 		itens: [],
-		total: 0
+		total: 0.00
 	})
 
 	const addItemAoCarrinho = () => {
@@ -54,12 +54,12 @@ function Home() {
 			idProduto: id,
 			nome: nome,
 			descricao: descricao,
-			preco: preco,
-			quantidade: quantidade
+			preco: parseFloat(preco),
+			quantidade: parseInt(quantidade)
 		}
 
 		// Atualizar o total da venda
-		let totalVendaNovo = parseFloat((parseFloat(itemCarrinho.preco) * parseInt(itemCarrinho.quantidade)) + parseFloat(venda.total))
+		let totalVendaNovo = (itemCarrinho.preco * itemCarrinho.quantidade) + venda.total
 		setVenda({total: totalVendaNovo})
 
 		// Adicionar no state de 'carrinho' para todo o App ter acesso aos items do carrinho
@@ -68,7 +68,7 @@ function Home() {
 	}
 
 	const deleteItemCarrinho = (id) => {
-		let valorItemRemovido = 0
+		let valorItemRemovido = 0.00
 		
 		let carrinhoAtualizado = carrinho.filter(item => {
 			// Pegar o valor do item que esta sendo removido para atualizar o valor total da venda
@@ -80,7 +80,7 @@ function Home() {
 		})
 
 		// Atualizar o total da venda
-		let totalVendaNovo = parseFloat(venda.total - parseFloat(valorItemRemovido))
+		let totalVendaNovo = venda.total - valorItemRemovido
 		
 		setVenda({total: totalVendaNovo})
 
@@ -179,12 +179,14 @@ function Home() {
 								<div className="col-12 col-sm-4">
 									<label htmlFor="selectProduct" className="form-label">Produto</label>
 									<select id="selectProduct" ref={refSelectProduct} className="form-select" onChange={(e) => {
-
-										setId(produtos[e.target.value].id)
-										setNome(produtos[e.target.value].nome)
-										setDescricao(produtos[e.target.value].descricao)
-										setPreco(produtos[e.target.value].preco);
-										setEstoque(produtos[e.target.value].estoque);
+										
+										if (e.target.value) {
+											setId(produtos[e.target.value].id)
+											setNome(produtos[e.target.value].nome)
+											setDescricao(produtos[e.target.value].descricao)
+											setPreco(produtos[e.target.value].preco)
+											setEstoque(produtos[e.target.value].estoque)
+										}
 
 									}} required >
 										<option value="">Pesquisar</option>
@@ -205,7 +207,7 @@ function Home() {
 								<div className="col-4 col-sm-2">
 									<label htmlFor="inputPrice" className="form-label">Preço</label>
 									<div className="input-group">
-										<span class="input-group-text bg-light" id="estoque-addon">R$</span>
+										<span className="input-group-text bg-light" id="estoque-addon">R$</span>
 										<input type="number" className="form-control" id="inputPrice" aria-describedby="estoque-addon" defaultValue={preco} readOnly />
 									</div>
 								</div>
