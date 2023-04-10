@@ -8,6 +8,8 @@ import firebase from '../../config/firebase';
 import Navbar from '../../components/navbar';
 import ItensVenda from '../../components/ItensVenda';
 import CustomAlert from '../../components/CustomAlert';
+// Bootstrap
+import Spinner from 'react-bootstrap/Spinner'
 
 function Relatorio() {
 	// Reference the Firestore database
@@ -31,6 +33,7 @@ function Relatorio() {
 
 	// Track whether the remove operation was successful or not
 	const [isSuccessful, setIsSuccessful] = useState()
+	const [loading, setLoading] = useState();
 
 	// Elements referenced with useRef
 	const alertElement = useRef()
@@ -65,9 +68,12 @@ function Relatorio() {
 	}
 
 	const deleteVenda = id => {
+		setLoading(true)
+		
 		db.collection('vendas').doc(id).delete()
 			.then(() => {
 				console.log('Venda removida do BD');
+				setLoading(false)
 				_showAlert(true)
 
 				// Now, update the current component
@@ -88,6 +94,7 @@ function Relatorio() {
 			})
 			.catch(err => {
 				console.error('Something went wrong while trying to remove the sale record from the database.', err)
+				setLoading(false)
 				_showAlert(false)
 			})
 	}
@@ -219,7 +226,11 @@ function Relatorio() {
 									(null)
 								) : (
 									<div className="text-center mb-3">
-										<button className="btn btn-outline-danger w-100" onClick={() => {deleteVenda(deleteButton.id)}}>Excluir Venda</button>
+										{
+											loading
+												? <Spinner animation="border" variant="secondary" role="status"></Spinner>
+												: <button className="btn btn-outline-danger w-100" onClick={() => {deleteVenda(deleteButton.id)}}>Excluir Venda</button>
+										}
 									</div>
 								)
 							}
