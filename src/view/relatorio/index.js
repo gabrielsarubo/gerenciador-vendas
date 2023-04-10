@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 // Redux
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 // Firebase
 import firebase from '../../config/firebase';
 // Componentes
 import Navbar from '../../components/navbar';
 import ItensVenda from '../../components/ItensVenda';
+import CustomAlert from '../../components/CustomAlert';
 
 function Relatorio() {
 	// Reference the Firestore database
@@ -28,6 +29,12 @@ function Relatorio() {
 	const [startDate, setStartDate] = useState()
 	const [endDate, setEndDate] = useState()
 
+	// Track whether the remove operation was successful or not
+	const [isSuccessful, setIsSuccessful] = useState()
+
+	// Elements referenced with useRef
+	const alertElement = useRef()
+
 	// Function that list all the items in one sale after clicking on it
 	const handleClickVenda = idVenda => {
 		// get itens based on the venda id
@@ -47,10 +54,21 @@ function Relatorio() {
 		})
 	}
 
+	const _showAlert = (res) => {
+		setIsSuccessful(res)
+
+		alertElement.current.style.display = 'block'
+
+		setTimeout(() => {
+			alertElement.current.style.display = 'none'
+		}, 4000);
+	}
+
 	const deleteVenda = id => {
 		db.collection('vendas').doc(id).delete()
 			.then(() => {
 				console.log('Venda removida do BD');
+				_showAlert(true)
 
 				// Now, update the current component
 				let vendasAtualizada = vendas.filter(venda => {
@@ -67,6 +85,10 @@ function Relatorio() {
 					id: undefined,
 					isDisabled: true
 				})
+			})
+			.catch(err => {
+				console.error('Something went wrong while trying to remove the sale record from the database.', err)
+				_showAlert(false)
 			})
 	}
 
@@ -204,6 +226,13 @@ function Relatorio() {
 						</section>
 					</div>
 				</div>
+			</div>
+			{/* Alert Container */}
+			<div className='alert--container'>
+				<CustomAlert
+					refAlertElement={alertElement}
+					success={isSuccessful}
+				/>
 			</div>
 		</>
 	);

@@ -1,0 +1,31 @@
+/* Animation for alert */
+@keyframes shrinkingBorder {
+  from {width: 100%;}
+  to {width: 0;}
+}
+
+.alert {
+  display: none;
+}
+
+.alert::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  content: '';
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: black;
+  animation: shrinkingBorder;
+  animation-duration: 4100ms;
+  border-radius: 2px;
+}
+
+.alert[data-success="true"]::after {
+  background-color: #0f5132;
+}
+
+.alert[data-success="false"]::after {
+  background-color: #842029;
+}
