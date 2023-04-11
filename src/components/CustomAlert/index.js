@@ -2,18 +2,16 @@ import React from 'react'
 
 import './CustomAlert.css'
 
-function CustomAlert({refAlertElement, success}) {
+function CustomAlert({ variant, isOpen }) {
+
+  const messages = {
+    'success': 'Operação realizada com sucesso.',
+    'fail': 'Houve uma falha na operação.'
+  }
+  
 	return (
-    <div
-      className={`alert ${success ? `alert-success` : `alert-danger`}`}
-      role="alert"
-      ref={refAlertElement}
-      data-success={success}
-    >
-      {success
-        ? "O registro da venda foi removido com sucesso."
-        : "Houve uma falha ao remover o registro da venda"
-      }
+    <div className={`alert alert-${variant || 'info'}`} data-isopen={isOpen}>
+      { messages[variant] }
     </div>
 	)
 }

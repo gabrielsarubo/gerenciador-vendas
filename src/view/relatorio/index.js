@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 // import { Link } from 'react-router-dom';
 // Redux
 // import { useSelector } from 'react-redux';
@@ -31,12 +31,16 @@ function Relatorio() {
 	const [startDate, setStartDate] = useState()
 	const [endDate, setEndDate] = useState()
 
-	// Track whether the remove operation was successful or not
-	const [isSuccessful, setIsSuccessful] = useState()
-	const [loading, setLoading] = useState();
+	const [loading, setLoading] = useState()
+	const [visible, setVisible] = useState(false)
+	const [variant, setVariant] = useState()
 
-	// Elements referenced with useRef
-	const alertElement = useRef()
+	const onShowAlert = () => {
+		setVisible(true)
+		window.setTimeout(() => {
+			setVisible(false)
+		}, 4000)
+	}
 
 	// Function that list all the items in one sale after clicking on it
 	const handleClickVenda = idVenda => {
@@ -57,16 +61,6 @@ function Relatorio() {
 		})
 	}
 
-	const _showAlert = (res) => {
-		setIsSuccessful(res)
-
-		alertElement.current.style.display = 'block'
-
-		setTimeout(() => {
-			alertElement.current.style.display = 'none'
-		}, 4000);
-	}
-
 	const deleteVenda = id => {
 		setLoading(true)
 		
@@ -74,7 +68,8 @@ function Relatorio() {
 			.then(() => {
 				console.log('Venda removida do BD');
 				setLoading(false)
-				_showAlert(true)
+				setVariant('success')
+				onShowAlert()
 
 				// Now, update the current component
 				let vendasAtualizada = vendas.filter(venda => {
@@ -95,7 +90,8 @@ function Relatorio() {
 			.catch(err => {
 				console.error('Something went wrong while trying to remove the sale record from the database.', err)
 				setLoading(false)
-				_showAlert(false)
+				setVariant('fail')
+				onShowAlert()
 			})
 	}
 
@@ -241,8 +237,8 @@ function Relatorio() {
 			{/* Alert Container */}
 			<div className='alert--container'>
 				<CustomAlert
-					refAlertElement={alertElement}
-					success={isSuccessful}
+					variant={variant}
+					isOpen={visible}
 				/>
 			</div>
 		</>

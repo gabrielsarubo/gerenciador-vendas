@@ -4,10 +4,6 @@
   to {width: 0;}
 }
 
-.alert {
-  display: none;
-}
-
 .alert::after {
   position: absolute;
   bottom: 0;
@@ -22,10 +18,20 @@
   border-radius: 2px;
 }
 
-.alert[data-success="true"]::after {
+.alert[data-isopen="true"] {
+  display: block;
+  visibility: visible;
+}
+
+.alert[data-isopen="false"] {
+  display: none;
+  visibility: hidden;
+}
+
+.alert.alert-success::after {
   background-color: #0f5132;
 }
 
-.alert[data-success="false"]::after {
+.alert.alert-danger::after {
   background-color: #842029;
 }
