@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+// import { Link } from 'react-router-dom';
 // Redux
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 // Firebase
 import firebase from '../../config/firebase';
 // Componentes
 import Navbar from '../../components/navbar';
 import ItensVenda from '../../components/ItensVenda';
+import CustomAlert from '../../components/CustomAlert';
+// Bootstrap
+import Spinner from 'react-bootstrap/Spinner'
 
 function Relatorio() {
 	// Reference the Firestore database
@@ -28,6 +31,17 @@ function Relatorio() {
 	const [startDate, setStartDate] = useState()
 	const [endDate, setEndDate] = useState()
 
+	const [loading, setLoading] = useState()
+	const [visible, setVisible] = useState(false)
+	const [variant, setVariant] = useState()
+
+	const onShowAlert = () => {
+		setVisible(true)
+		window.setTimeout(() => {
+			setVisible(false)
+		}, 4000)
+	}
+
 	// Function that list all the items in one sale after clicking on it
 	const handleClickVenda = idVenda => {
 		// get itens based on the venda id
@@ -48,9 +62,14 @@ function Relatorio() {
 	}
 
 	const deleteVenda = id => {
+		setLoading(true)
+		
 		db.collection('vendas').doc(id).delete()
 			.then(() => {
 				console.log('Venda removida do BD');
+				setLoading(false)
+				setVariant('success')
+				onShowAlert()
 
 				// Now, update the current component
 				let vendasAtualizada = vendas.filter(venda => {
@@ -67,6 +86,12 @@ function Relatorio() {
 					id: undefined,
 					isDisabled: true
 				})
+			})
+			.catch(err => {
+				console.error('Something went wrong while trying to remove the sale record from the database.', err)
+				setLoading(false)
+				setVariant('fail')
+				onShowAlert()
 			})
 	}
 
@@ -197,13 +222,24 @@ function Relatorio() {
 									(null)
 								) : (
 									<div className="text-center mb-3">
-										<button className="btn btn-outline-danger w-100" onClick={() => {deleteVenda(deleteButton.id)}}>Excluir Venda</button>
+										{
+											loading
+												? <Spinner animation="border" variant="secondary" role="status"></Spinner>
+												: <button className="btn btn-outline-danger w-100" onClick={() => {deleteVenda(deleteButton.id)}}>Excluir Venda</button>
+										}
 									</div>
 								)
 							}
 						</section>
 					</div>
 				</div>
+			</div>
+			{/* Alert Container */}
+			<div className='alert--container'>
+				<CustomAlert
+					variant={variant}
+					isOpen={visible}
+				/>
 			</div>
 		</>
 	);

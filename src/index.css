@@ -8,6 +8,14 @@
   --brandBlue: #2F4164;
 }
 
+html, body {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+}
+
 body {
   font-family: 'Nunito', sans-serif;
   color: #1b253a;
@@ -50,4 +58,13 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
   background-color: #2F4164;;
 
   transition: 0.5s;
+}
+
+/* Styles for Alerts */
+.alert--container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 400px;
+  margin-right: 1rem;
 }
