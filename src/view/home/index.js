@@ -7,6 +7,7 @@ import firebase from '../../config/firebase';
 // Componentes
 import Navbar from '../../components/navbar';
 import CartItems from '../../components/CartItems';
+import CustomAlert from '../../components/CustomAlert';
 
 function Home() {
 	// Reference the Firestore database
@@ -32,6 +33,17 @@ function Home() {
 
 	// Carrinho (lista de itens)
 	const [carrinho, setCarrinho] = useState([])
+
+	// Utils
+	const [visible, setVisible] = useState(false)
+	const [variant, setVariant] = useState()
+
+	const onShowAlert = () => {
+		setVisible(true)
+		window.setTimeout(() => {
+			setVisible(false)
+		}, 4000)
+	}
 
 	/* Venda (mesma estrutura da collection 'venda' dentro do BD)
 		data: timestamp
@@ -133,9 +145,14 @@ function Home() {
 	}
 
 	const handleDeleteProduto = id => {
-		db.collection('produtos').doc(id).delete()
+		let msg = 'Tem certeza que gostaria de remover este produto da loja?'
+		
+		if (window.confirm(msg)) {
+			db.collection('produtos').doc(id).delete()
 			.then(() => {
-				console.log('Venda removida do BD');
+				console.log('Produto removido do BD');
+				setVariant('success')
+				onShowAlert()
 
 				let produtosAtualizado = produtos.filter(produto => {
 					return produto.id !== id
@@ -143,6 +160,12 @@ function Home() {
 		
 				setProdutos(produtosAtualizado)
 			})
+			.catch(err => {
+				console.error('Something went wrong while trying to remove the product from the database.', err)
+				setVariant('fail')
+				onShowAlert()
+			})
+		}
 	}
 	
 	useEffect(() => {
@@ -312,6 +335,13 @@ function Home() {
 						</section>
 					</div>
 				</div>
+			</div>
+			{/* Alert Container */}
+			<div className='alert--container'>
+				<CustomAlert
+					variant={variant}
+					isOpen={visible}
+				/>
 			</div>
 		</>
 	);
