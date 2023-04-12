@@ -24,13 +24,15 @@ Os integrantes responsáveis pelo projeto durante cada disciplina foram:
 
 ## Instruções de instalação
 
+Atenção: para realizar a instação das dependências do projeto é necessário que seja utilizado o Node.js na sua <strong>versão 14 ou antes</strong>. Se essa não for a versão utilizada atualmente, é recomendado usar o [nvm](https://github.com/nvm-sh/nvm) para instalar múltiplas versões do Node.js no sistema.
+
 ```bash
 
 # Instalar todas as dependências necessárias para iniciar o app localmente
 npm install
 
 # Iniciar o app em modo de desenvolvimento
-# Abrir http://localhost:3000) para visualizar no navegador
+# Abrir http://localhost:3000 para visualizar no navegador
 npm start
 
 ```
