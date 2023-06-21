@@ -240,7 +240,7 @@ describe('CT004 - Atualizar um produto', () => {
     }),
 
     //executar essa classe com a lista possuindo algum item de nome não repetido pelos outros testes
-    describe.only('CT006 - Cadastrar uma venda', () => {
+    describe('CT006 - Cadastrar uma venda', () => {
         beforeEach(() => {
             cy.visit('localhost:3000/home')
         })
@@ -276,12 +276,31 @@ describe('CT004 - Atualizar um produto', () => {
     })
 
 
+describe.only('CT007 - Excluir uma venda', () => {
+    beforeEach(() => {
+        cy.visit('localhost:3000/relatorio').get('tbody > :nth-child(1)')
+            .click()
+    })
+    // Apenas esse caminho é possível
+    //1->2->3->4->5->6
+    it('Deleção correta', () => {
+        cy
+            .get('.btn-outline-danger')
+            .click()
+
+        cy.contains('Operação realizada com sucesso.')
+            .should('be.visible')
+
+    })
+
+
+})
 
 
 
 
 //executar essa classe com a lista possuindo algum item de nome não repetido pelos outros testes
-describe.only('CT009 - Pesquisar Produto', () => {
+describe('CT009 - Pesquisar Produto', () => {
     beforeEach(() => {
         cy.visit('localhost:3000/home')
     })
