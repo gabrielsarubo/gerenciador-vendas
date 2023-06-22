@@ -275,8 +275,8 @@ describe('CT004 - Atualizar um produto', () => {
 
     })
 
-
-describe.only('CT007 - Excluir uma venda', () => {
+//executar essa classe com uma lista não vazia
+describe('CT007 - Excluir uma venda', () => {
     beforeEach(() => {
         cy.visit('localhost:3000/relatorio').get('tbody > :nth-child(1)')
             .click()
@@ -295,6 +295,51 @@ describe.only('CT007 - Excluir uma venda', () => {
 
 
 })
+// Deve ser executada com uma lista não vazia 
+describe.only('CT008 - Filtrar relatório de vendas', () => {
+    beforeEach(() => {
+        cy.visit('localhost:3000/relatorio')
+
+    })
+
+    //1->2->3->4->6
+    it('Lista de vendas vazia', () => {
+        cy.get('#inputStartDate').type('2023-01-01')
+            .get('#inputEndDate').type('2020-05-31')
+            .get('.btn-primary').click()
+            .get('tbody > :nth-child(1) > .text-center')
+            .contains('Nenhuma venda registrada.')
+            .should('be.visible')
+    })
+
+    //1->2->3->4->5
+    // deve ser testado com uma conta que não é a dona da venda IUIkR5h22mlEtAgqgGKF
+    // atualmente este teste falha
+    it('Lista de vendas preenchida, deve ter a apenas a venda gvbSVfi6RmyH82PjvBE3', () => {
+        cy.get('#inputStartDate').type('2020-05-31')
+            .get('#inputEndDate').type('2023-01-01')
+            .get('.btn-primary').click()
+            .get('tbody > :nth-child(1)')
+            .contains('IUIkR5h22mlEtAgqgGKF')
+            .should('not.be.visible')
+    })
+
+    //1->2->3
+
+    // atualmente este teste falha
+    it('Lista com datas vazia', () => {
+        cy.get('#inputStartDate')
+            .get('#inputEndDate')
+            .get('.btn-primary').click()
+            .get('tbody > :nth-child(1)')
+            .contains('Nenhuma venda registrada.')
+            .should('be.visible')
+    })
+
+
+})
+
+
 
 
 
